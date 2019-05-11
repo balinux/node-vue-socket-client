@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<body>
+    <div class="container">
+        <div id="app">
+            <h1 align="center"><span class="label label-info">Twitter Stream </span>
+                <h4 align="center">(topic : react native and flutter)</h4>
+            </h1>
+            <br>
+
+            <div class="row" v-for="tw in tweets.slice().reverse()">
+                <div class="col-2">
+                    <img :src="tw.avatar" class="avatar pull-left" style="padding:10px;" />
+                </div>
+                <div class="col-10">
+                    <h5>{{tw.name}} - @{{tw.screen_name}}</h5>
+                    <span class="text">{{tw.text}}</span>
+                    <hr>
+                </div>
+            </div>
+
+            <!-- <ul>
+                <li v-for="tw in tweets"> {{tw.name}} - {{tw.text}}</li>
+            </ul> -->
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+<!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- <script src="https://vuejs.org/js/vue.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.common.dev.js"></script> -->
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            message: '',
+            tweets: []
+        },
+        created: function () {
+            // socket = io('http://localhost:3000');
+            // if using localhost
+            // const socket = io('http://localhost:3000');
+
+            // server on heroku
+            socket = io('https://node-vue-socket.herokuapp.com/');
+        },
+        methods: {
+            sendMessage: function () {
+                socket.emit('message', this.message)
+                this.message = ''
+            }
+        },
+        mounted: function () {
+            socket.on('tweets', function (tweet) {
+                app.tweets.push(tweet)
+            })
+        }
+    })
+</script>
+
+</html>
